@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">CFDT INTERCO Haute - Savoie     </string>
+    <string name="action_synch">Synchronizer</string>
+    <string name="btn_logout">DECONNEXION</string>
+    <string name="action_logout">Deconnexion</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_surname">Prenom</string>
+    <string name="hint_password">CFDT mot de passe</string>
+    <string name="hint_name">Nom</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="btn_register">CONNEXION</string>
+    <string name="warning_register">Entrer vos informations svp</string>
+    <string name="warning_password">Mauvais mot de passe, réessyer dans</string>
+    <string name="text_send_custom1">Voulez vous envoyer la feuille </string>
+    <string name="synchronize">Synchronization</string>
+    <string name="logout">Deconnexion</string>
+    <string name="really_logout">Voulez vous vraiment vous déconnecter?</string>
+    <string name="really_synch">Voulez vous vraiment synchronizer les fichiers? (vous allez perdre toutes modifications) </string>
+    <string name="adressnotfound">Impossible d\'extraire l\'address</string>
+    <string name="navigation">Navigation</string>
+    <string name="really_navigation">Voulez vous vraiment aller au</string>
+</resources>

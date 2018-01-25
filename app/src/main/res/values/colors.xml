@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="input_register">#888888</color>
+    <color name="input_register_bg">#3b4148</color>
+    <color name="input_register_hint">#5e6266</color>
+    <color name="cfdt_primary">#e15b12</color>
+    <color name="cfdt_secondary">#3c3c3e</color>
+    <color name="cfdt_tertiaire">#ffffff</color>
+    <color name="cfdt_password">#de804d</color>
+</resources>
