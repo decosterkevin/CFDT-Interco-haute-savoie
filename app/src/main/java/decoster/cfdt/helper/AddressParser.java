@@ -42,9 +42,9 @@ public class AddressParser {
                 break;
             }
         }
-        adress = adress.replaceAll("[^a-zA-Z0-9éàèçù]", " ") ;
-        postal_code = postal_code.replaceAll("[^a-zA-Z0-9 ]", " ").replaceAll("\\s+","");
-        city = city.replaceAll("[^a-zA-Z ]", " ").replaceAll("\\s+","");
+        adress = adress.replaceAll("[^a-zA-Z0-9éàèçù]", " ");
+        postal_code = postal_code.replaceAll("[^a-zA-Z0-9 ]", " ").replaceAll("\\s+", "");
+        city = city.replaceAll("[^a-zA-Z ]", " ").replaceAll("\\s+", "");
         return new String[]{adress, postal_code, city};
     }
 }

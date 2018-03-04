@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CFDT - Copie.iml" filepath="$PROJECT_DIR$/CFDT - Copie.iml" />
+      <module fileurl="file://C:\Users\Kevin\Documents\project\CFDT-Interco-haute-savoie\CFDT - Copie.iml" filepath="C:\Users\Kevin\Documents\project\CFDT-Interco-haute-savoie\CFDT - Copie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CFDT-Interco-haute-savoie.iml" filepath="$PROJECT_DIR$/CFDT-Interco-haute-savoie.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Kevin\Documents\project\CFDT-Interco-haute-savoie\app\app.iml" filepath="C:\Users\Kevin\Documents\project\CFDT-Interco-haute-savoie\app\app.iml" />
     </modules>
   </component>
 </project>

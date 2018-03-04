@@ -5,7 +5,7 @@
     android:background="@color/input_register_bg"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -13,7 +13,8 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp" >
+        android:paddingRight="20dp">
+
         <EditText
             android:id="@+id/surname"
             android:layout_width="fill_parent"
@@ -26,6 +27,7 @@
             android:singleLine="true"
             android:textColor="@color/cfdt_tertiaire"
             android:textColorHint="@color/input_register" />
+
         <EditText
             android:id="@+id/name"
             android:layout_width="fill_parent"
@@ -33,9 +35,9 @@
             android:layout_marginBottom="10dp"
             android:background="@color/input_register_hint"
             android:hint="@string/hint_name"
+            android:inputType="textCapWords"
             android:padding="10dp"
             android:singleLine="true"
-            android:inputType="textCapWords"
             android:textColor="@color/cfdt_tertiaire"
             android:textColorHint="@color/input_register" />
 
@@ -51,7 +53,6 @@
             android:singleLine="true"
             android:textColor="@color/cfdt_tertiaire"
             android:textColorHint="@color/input_register" />
-
 
 
         <!-- Login Button -->

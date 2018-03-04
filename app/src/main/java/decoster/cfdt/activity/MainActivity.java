@@ -9,9 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.DropBoxManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,30 +17,22 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.webkit.URLUtil;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     public static SQLiteHandler db;
     public static SessionManager session;
     public static ArrayList<TableBuilder> tbs;
+    private final int maxStringLenght = 30;
+    private final String DIRNAME = "xls_files";
+    ProgressDialog dialog;
     private LinearLayout sv;
     private LinearLayout pathPanel;
     private Context context = null;
@@ -74,11 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentRow = -1;
     private ArrayList<EditText> editTexts = new ArrayList<>();
     private HashSet<Integer> modifiedEditText = new HashSet<>();
-    private final int maxStringLenght = 30;
     private Drawable valideImage;
-    private final String DIRNAME = "xls_files";
-
-    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     params[3] = body;
                     params[4] = filename;
 
-                    params[5] = sender.length()==0?AppConfig.RECIPIENT:MailSender.validate(sender);
+                    params[5] = sender.length() == 0 ? AppConfig.RECIPIENT : MailSender.validate(sender);
 
                     new MailSender().sendFromGMail(context, params);
                     //new MailSender().execute(params);
@@ -243,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
         info.setClickable(false);
         info.setBackground(null);
         fab.show();
-        int initial_row = sh.getCell(0,0).getContents().toLowerCase().contains("COLLECTIVITE".toLowerCase())?1:2;
+        int initial_row = sh.getCell(0, 0).getContents().toLowerCase().contains("COLLECTIVITE".toLowerCase()) ? 1 : 2;
         for (int r = initial_row; r < sh.getRows(); r++) {
             final int row = r;
             String textCell = sh.getCell(0, r).getContents();
@@ -319,8 +308,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        int initial_row = sh.getCell(0,0).getContents().toLowerCase().contains("COLLECTIVITE".toLowerCase())?1:2;
-        Cell[] labels = sh.getRow(initial_row-1);
+        int initial_row = sh.getCell(0, 0).getContents().toLowerCase().contains("COLLECTIVITE".toLowerCase()) ? 1 : 2;
+        Cell[] labels = sh.getRow(initial_row - 1);
         editTexts = new ArrayList<>();
         modifiedEditText = new HashSet<>();
         for (int c = 1; c < labels.length; c++) {
@@ -466,8 +455,7 @@ public class MainActivity extends AppCompatActivity {
 
             new SavingChangeTask().execute();
 
-        }
-        else {
+        } else {
 
         }
     }
@@ -476,8 +464,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<TableBuilder> doInBackground(Boolean... params) {
-            if (tbs !=  null){
-                for (TableBuilder tb : tbs){
+            if (tbs != null) {
+                for (TableBuilder tb : tbs) {
                     tb.closeFile();
                 }
             }
@@ -545,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
 
                         TableBuilder tb = new TableBuilder(newFile, path);
                         tb.createWB();
-                        if(tb.getWb() != null) {
+                        if (tb.getWb() != null) {
                             tbs.add(tb);
                         }
 

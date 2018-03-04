@@ -5,9 +5,7 @@ import android.util.Log;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -31,9 +29,9 @@ public class LineParser {
                     line = removeUTF8BOM(line);
                     firstLine = false;
                 }
-                line =line.replaceAll("\\s","");
-                line = line.substring(0, line.indexOf("//")==-1?line.length():line.indexOf("//"));
-                String[] spl = line.indexOf(":") == -1?(new String[]{line, null}):line.split(":",2);
+                line = line.replaceAll("\\s", "");
+                line = line.substring(0, line.indexOf("//") == -1 ? line.length() : line.indexOf("//"));
+                String[] spl = line.indexOf(":") == -1 ? (new String[]{line, null}) : line.split(":", 2);
 
 
                 output.add(spl);
@@ -41,19 +39,19 @@ public class LineParser {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             it.close();
         }
 
         return output;
     }
+
     public static void put(ArrayList<String[]> entries, File file) {
         try {
             PrintWriter writer = new PrintWriter(file);
-            for(String[] entry: entries) {
-                Log.d("TAG2", entry[0]+":"+entry[1]);
-                writer.println(entry[0]+":"+entry[1]);
+            for (String[] entry : entries) {
+                Log.d("TAG2", entry[0] + ":" + entry[1]);
+                writer.println(entry[0] + ":" + entry[1]);
             }
             writer.close();
 
@@ -63,6 +61,7 @@ public class LineParser {
 
 
     }
+
     private static String removeUTF8BOM(String s) {
         if (s.startsWith(UTF8_BOM)) {
             s = s.substring(1);

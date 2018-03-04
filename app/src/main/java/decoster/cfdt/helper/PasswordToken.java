@@ -1,11 +1,6 @@
 package decoster.cfdt.helper;
 
-import android.util.Log;
-
 import java.security.MessageDigest;
-
-import decoster.cfdt.activity.MainActivity;
-import decoster.cfdt.app.AppConfig;
 
 public class PasswordToken {
 

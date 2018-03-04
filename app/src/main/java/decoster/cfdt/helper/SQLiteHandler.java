@@ -13,8 +13,6 @@ import android.util.Log;
 
 import java.util.HashMap;
 
-import decoster.cfdt.app.AppConfig;
-
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = SQLiteHandler.class.getSimpleName();

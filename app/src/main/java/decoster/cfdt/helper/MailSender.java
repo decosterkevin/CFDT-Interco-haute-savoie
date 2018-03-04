@@ -3,35 +3,49 @@ package decoster.cfdt.helper;
 /**
  * Created by Decoster on 04/05/2016.
  */
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.util.*;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.Authenticator;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import decoster.cfdt.app.AppConfig;
 
 
 public class MailSender extends AsyncTask<String, Integer, Void> {
-    private ProgressDialog pDialog;
     private static final String EMAIL_PATTERN =
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private ProgressDialog pDialog;
+
     public static String validate(final String hex) {
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(hex);
-        return matcher.matches()?hex: AppConfig.RECIPIENT;
+        return matcher.matches() ? hex : AppConfig.RECIPIENT;
 
     }
+
     public void sendFromGMail(Context context, String... params) {
         pDialog = new ProgressDialog(context);
         pDialog.setCancelable(false);
@@ -69,7 +83,7 @@ public class MailSender extends AsyncTask<String, Integer, Void> {
             InternetAddress toAddress = new InternetAddress(to);
 
 
-                message.addRecipient(Message.RecipientType.TO, toAddress);
+            message.addRecipient(Message.RecipientType.TO, toAddress);
 
 
             message.setSubject(subject);

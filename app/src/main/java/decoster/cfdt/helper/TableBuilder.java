@@ -1,8 +1,6 @@
 package decoster.cfdt.helper;
 
-import android.content.Context;
 import android.util.Log;
-
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -11,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import decoster.cfdt.activity.MainActivity;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -28,11 +26,11 @@ import jxl.write.biff.RowsExceededException;
 
 public class TableBuilder {
 
+    public final static String TAG = TableBuilder.class.getSimpleName();
+    private final String DIRNAME = "xls_files";
     private WorkbookSettings ws;
     private File file;
     private Workbook wb;
-    public final static String TAG = TableBuilder.class.getSimpleName();
-    private final String DIRNAME = "xls_files";
     private File path;
     private boolean[][][] isComplete;
     private ArrayList<ArrayList<Integer>> remainingRows;
@@ -59,13 +57,11 @@ public class TableBuilder {
         } catch (BiffException e) {
             e.printStackTrace();
         }
-        if(wb != null) {
+        if (wb != null) {
             this.isComplete = computeIsFinishedArray();
         }
 
     }
-
-
 
 
     private boolean[][][] computeIsFinishedArray() {
@@ -100,8 +96,6 @@ public class TableBuilder {
     }
 
 
-
-
     public void update_cell(Sheet sh, int col, int row, String new_text) {
 
         WritableWorkbook wwb = null;
@@ -134,7 +128,6 @@ public class TableBuilder {
         }
 
     }
-
 
 
     public String createNewFileFromSheet(Sheet sheet) {
@@ -186,9 +179,10 @@ public class TableBuilder {
 
 
     }
+
     //boolean methode to check row/sheet validation
     public boolean isRowComplete(Sheet sheet, int row) {
-        int sheetIndex =getSheetIndex(sheet);
+        int sheetIndex = getSheetIndex(sheet);
         boolean[] cols = isComplete[sheetIndex][row];
         boolean isComplet = true;
         int rowI = 0;
@@ -208,9 +202,10 @@ public class TableBuilder {
         //Log.d(MainActivity.class.getSimpleName(), remainingRows.get(getSheetIndex(sheet)).toString());
         return remainingRows.get(getSheetIndex(sheet)).isEmpty();
     }
+
     //Getters
     public String getName() {
-        return  FilenameUtils.removeExtension(file.getName()).replaceAll("_", " ").toLowerCase();
+        return FilenameUtils.removeExtension(file.getName()).replaceAll("_", " ").toLowerCase();
 
     }
 
@@ -233,6 +228,7 @@ public class TableBuilder {
     public Sheet[] getSheets() {
         return wb.getSheets();
     }
+
     private int getSheetIndex(Sheet sheet) {
         Integer index = null;
         final Sheet[] sheets = wb.getSheets();
@@ -243,8 +239,9 @@ public class TableBuilder {
         }
         return (int) index;
     }
+
     public void closeFile() {
-       wb.close();
+        wb.close();
     }
 
 }

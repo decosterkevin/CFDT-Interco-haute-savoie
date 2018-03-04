@@ -2,25 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cfdt_primary" >
+    android:background="@color/cfdt_primary">
 
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="50dp"
         android:layout_centerInParent="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/cfdt2" />
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:textSize="18dp"
-        android:textColor="#454545"
-        android:gravity="center_horizontal"
         android:layout_alignParentBottom="true"
-        android:text="made by Kevin Decoster" />
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal"
+        android:text="made by Kevin Decoster"
+        android:textColor="#454545"
+        android:textSize="18dp" />
 
 
 </RelativeLayout>
