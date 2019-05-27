@@ -32,6 +32,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_SURNAME = "uid";
+    private static final String KEY_SERVER_ACCESS_CODE = "access_code";
+    private static final String KEY_SERVER_GDRIVE_URL = "gdrive_url";
     private SQLiteDatabase db;
 
     public SQLiteHandler(Context context) {
@@ -43,7 +45,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         this.db = db;
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_SURNAME + " TEXT," + KEY_NAME + " TEXT,"
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_SURNAME + " TEXT," + KEY_NAME + " TEXT," + KEY_SERVER_ACCESS_CODE + " TEXT," + KEY_SERVER_GDRIVE_URL + " TEXT,"
                 + KEY_EMAIL + " TEXT UNIQUE" + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
 
@@ -63,14 +65,15 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      */
-    public void addUser(String surname, String name, String email) {
+    public void addUser(String surname, String name, String email, String serverAccessCode, String gdriveUrl) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_SURNAME, surname); // Email
         values.put(KEY_NAME, name); // Name
         values.put(KEY_EMAIL, email); // Email
-
+        values.put(KEY_SERVER_ACCESS_CODE, serverAccessCode); // Email
+        values.put(KEY_SERVER_GDRIVE_URL, gdriveUrl); // Email
         // Inserting Row
         long id = db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
@@ -94,6 +97,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             user.put("surname", cursor.getString(1));
             user.put("name", cursor.getString(2));
             user.put("email", cursor.getString(3));
+            user.put("email", cursor.getString(4));
+            user.put("email", cursor.getString(5));
         }
         cursor.close();
         db.close();

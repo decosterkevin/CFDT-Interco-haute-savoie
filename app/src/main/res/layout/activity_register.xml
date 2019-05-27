@@ -53,7 +53,18 @@
             android:singleLine="true"
             android:textColor="@color/cfdt_tertiaire"
             android:textColorHint="@color/input_register" />
-
+        <EditText
+            android:id="@+id/access_code"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@color/input_register_hint"
+            android:hint="@string/hint_access_code"
+            android:inputType="textCapWords"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColor="@color/cfdt_tertiaire"
+            android:textColorHint="@color/input_register" />
 
         <!-- Login Button -->
 

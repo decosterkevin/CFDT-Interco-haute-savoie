@@ -39,11 +39,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import decoster.cfdt.AppConfig;
 import decoster.cfdt.R;
-import decoster.cfdt.app.AppConfig;
 import decoster.cfdt.helper.AddressParser;
 import decoster.cfdt.helper.LineParser;
-import decoster.cfdt.helper.MailSender;
 import decoster.cfdt.helper.SQLiteHandler;
 import decoster.cfdt.helper.SessionManager;
 import decoster.cfdt.helper.TableBuilder;
@@ -68,14 +67,16 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<EditText> editTexts = new ArrayList<>();
     private HashSet<Integer> modifiedEditText = new HashSet<>();
     private Drawable valideImage;
+    private HashMap<String, String> userDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         valideImage = ResourcesCompat.getDrawable(getResources(), R.drawable.valid, null);
-        passwordScreen();
+
         db = new SQLiteHandler(getApplicationContext());
+
         context = this;
         // Progress dialog
         // session manager
@@ -84,10 +85,12 @@ public class MainActivity extends AppCompatActivity {
         if (!session.isLoggedIn()) {
             registerUser();
         }
+        userDetails = db.getUserDetails();
         //Build tableBuilder for every files in AppConfig (can be improve)
 
 
         dialog = new ProgressDialog(MainActivity.this);
+
         sv = (LinearLayout) findViewById(R.id.ScrollPanel);
         pathPanel = (LinearLayout) findViewById(R.id.pathPanel);
         pathPanel.setVisibility(LinearLayout.GONE);
@@ -113,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendXLS() {
         final Sheet specSheet = currentSheet;
-        final HashMap<String, String> details = db.getUserDetails();
 
         final Dialog diag = new Dialog(this, R.style.PauseDialog);
         diag.setContentView(R.layout.custom_send_layout);
@@ -122,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         String previousText = (String) text.getText();
         text.setText(previousText + " " + currentTb.getName() + " à :");
         final EditText editText = (EditText) diag.findViewById(R.id.editText);
-        editText.setHint(AppConfig.RECIPIENT);
         diag.show();
 
         Button yes = (Button) diag.findViewById(R.id.dialogButtonYes);
@@ -139,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 diag.dismiss();
-                String surname = details.get("surname");
-                String name = details.get("name");
-                String email = details.get("email");
+                String surname = userDetails.get("surname");
+                String name = userDetails.get("name");
+                String email = userDetails.get("email");
                 String subject = "Envoie de " + name + " " + surname + " pour le fichier " + currentTb.getName();
                 String body = "Bonjour, \n " + name + " " + surname + " a envoyé une mise à jour d'un fichier excel que vous pouvez trouver en pièce jointe. \n Vous pouvez contacté cette personne au " + email + " \n Coridalement, \n Le service CFDT Helper.";
 
@@ -149,17 +150,9 @@ public class MainActivity extends AppCompatActivity {
                 String filename = currentTb.getPath();
                 final String sender = editText.getText().toString();
                 if (filename != null) {
-
-                    String[] params = new String[6];
-                    params[0] = getString(R.string.email_id);
-                    params[1] = getString(R.string.email_secret);
-                    params[2] = subject;
-                    params[3] = body;
-                    params[4] = filename;
-
-                    params[5] = sender.length() == 0 ? AppConfig.RECIPIENT : MailSender.validate(sender);
-
-                    new MailSender().sendFromGMail(context, params);
+                    String serverUrl = AppConfig.SERVER_URL;
+                    //TODO Change to send to server instead trough POST request
+                    //new  Client().sendFile(context, params);
                     //new MailSender().execute(params);
                     Log.d(MainActivity.class.getSimpleName(), "EMAIL SEND WITH SUCCESS");
 
@@ -426,10 +419,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void passwordScreen() {
-        Intent intent = new Intent(MainActivity.this, PasswordActivity.class);
-        startActivity(intent);
-    }
 
     private void registerUser() {
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
@@ -480,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
             if (listFiles.length() == 0 || params[0]) {
                 Log.d(MainActivity.class.getSimpleName(), "list files not found, creation... ");
                 try {
-                    urlFiles = new URL(AppConfig.fileToDownload);
+                    urlFiles = new URL(userDetails.get("gdrive_url"));
                     FileUtils.copyURLToFile(urlFiles, listFiles, 100000, 100000);
 
                 } catch (MalformedURLException e) {

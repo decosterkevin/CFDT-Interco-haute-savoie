@@ -12,6 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import decoster.cfdt.R;
 import decoster.cfdt.helper.SQLiteHandler;
 import decoster.cfdt.helper.SessionManager;
@@ -22,6 +32,7 @@ public class RegisterActivity extends Activity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputSurname;
+    private EditText inputAccessCode;
     private SessionManager session;
     private SQLiteHandler db;
 
@@ -33,6 +44,7 @@ public class RegisterActivity extends Activity {
         inputFullName = (EditText) findViewById(R.id.name);
         inputEmail = (EditText) findViewById(R.id.email);
         inputSurname = (EditText) findViewById(R.id.surname);
+        inputAccessCode = (EditText) findViewById(R.id.access_code);
         btnRegister = (Button) findViewById(R.id.btnRegister);
 
 
@@ -57,9 +69,9 @@ public class RegisterActivity extends Activity {
                 String name = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String surname = inputSurname.getText().toString().trim();
-
-                if (!name.isEmpty() && !email.isEmpty() && !surname.isEmpty()) {
-                    registerUser(surname, name, email, null);
+                String accessCode = inputAccessCode.getText().toString().trim();
+                if (!name.isEmpty() && !email.isEmpty() && !surname.isEmpty() && !accessCode.isEmpty() ) {
+                    registerUser(surname, name, email, accessCode);
                 } else {
                     Toast.makeText(getApplicationContext(),
                             getResources().getString(R.string.warning_register), Toast.LENGTH_LONG)
@@ -75,14 +87,41 @@ public class RegisterActivity extends Activity {
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
      */
-    private void registerUser(final String name, final String surname, final String email,
-                              final String xls_file) {
+    private void registerUser(final String name, final String surname, final String email, final String accessCode) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://www.google.com";
 
-        db.addUser(surname, name, email);
-        session.setLogin(true);
-        finish();
+        // Request a string response from the provided URL.
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    // Display the first 500 characters of the response string.
+                                    db.addUser(surname, name, email, accessCode, jsonObject.getString("gdriveUrl"));
+                                    session.setLogin(true);
+                                    finish();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(),
+                                getResources().getString(R.string.warning_register), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+                queue.add(stringRequest);
+
+
 
 
     }

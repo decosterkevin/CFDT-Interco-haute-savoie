@@ -4,6 +4,7 @@
     <string name="btn_logout">DECONNEXION</string>
     <string name="action_logout">Deconnexion</string>
     <string name="hint_email">Email</string>
+    <string name="hint_access_code">Access Code</string>
     <string name="hint_surname">Prenom</string>
     <string name="hint_password">CFDT mot de passe</string>
     <string name="hint_name">Nom</string>
