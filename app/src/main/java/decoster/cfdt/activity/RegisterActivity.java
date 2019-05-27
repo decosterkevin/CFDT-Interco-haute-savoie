@@ -7,6 +7,7 @@ package decoster.cfdt.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -99,10 +100,11 @@ public class RegisterActivity extends Activity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.d(MainActivity.class.getSimpleName(), response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             // Display the first 500 characters of the response string.
-                            db.addUser(surname, name, email, accessCode, jsonObject.getString("gdriveUrl"));
+                            db.addUser(surname, name,  accessCode, jsonObject.getString("gdrive_url"), email);
                             session.setLogin(true);
                             that.finish();
                         } catch (JSONException e) {

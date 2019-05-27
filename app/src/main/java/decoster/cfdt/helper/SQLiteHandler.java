@@ -65,15 +65,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      */
-    public void addUser(String surname, String name, String email, String serverAccessCode, String gdriveUrl) {
+    public void addUser(String surname, String name, String serverAccessCode, String gdriveUrl, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_SURNAME, surname); // Email
         values.put(KEY_NAME, name); // Name
-        values.put(KEY_EMAIL, email); // Email
         values.put(KEY_SERVER_ACCESS_CODE, serverAccessCode); // Email
         values.put(KEY_SERVER_GDRIVE_URL, gdriveUrl); // Email
+        values.put(KEY_EMAIL, email); // Email
+
         // Inserting Row
         long id = db.insert(TABLE_USER, null, values);
         db.close(); // Closing database connection
@@ -96,9 +97,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             Log.d(TAG, "Fetching user from Sqlite: " + user.toString());
             user.put("surname", cursor.getString(1));
             user.put("name", cursor.getString(2));
-            user.put("email", cursor.getString(3));
-            user.put("access_code", cursor.getString(4));
-            user.put("gdrive_url", cursor.getString(5));
+            user.put("access_code", cursor.getString(3));
+            user.put("gdrive_url", cursor.getString(4));
+            user.put("email", cursor.getString(5));
         }
         cursor.close();
         db.close();

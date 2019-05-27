@@ -173,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
                     smr.addStringParam("surname", surname);
                     smr.addStringParam("name", name);
                     smr.addStringParam("email", email);
-                    smr.addStringParam("sender", sender);
-                    smr.addStringParam("fileName", fileName);
                     smr.addFile("file", filepath);
 
                     RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -494,6 +492,7 @@ public class MainActivity extends AppCompatActivity {
             if (listFiles.length() == 0 || params[0]) {
                 Log.d(MainActivity.class.getSimpleName(), "list files not found, creation... ");
                 try {
+                    Log.d(MainActivity.class.getSimpleName(), userDetails.get("gdrive_url"));
                     urlFiles = new URL(userDetails.get("gdrive_url"));
                     FileUtils.copyURLToFile(urlFiles, listFiles, 100000, 100000);
 
