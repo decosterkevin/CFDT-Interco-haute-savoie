@@ -97,8 +97,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             user.put("surname", cursor.getString(1));
             user.put("name", cursor.getString(2));
             user.put("email", cursor.getString(3));
-            user.put("email", cursor.getString(4));
-            user.put("email", cursor.getString(5));
+            user.put("access_code", cursor.getString(4));
+            user.put("gdrive_url", cursor.getString(5));
         }
         cursor.close();
         db.close();

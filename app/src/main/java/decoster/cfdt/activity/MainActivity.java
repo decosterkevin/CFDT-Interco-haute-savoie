@@ -26,6 +26,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -143,17 +150,35 @@ public class MainActivity extends AppCompatActivity {
                 String surname = userDetails.get("surname");
                 String name = userDetails.get("name");
                 String email = userDetails.get("email");
-                String subject = "Envoie de " + name + " " + surname + " pour le fichier " + currentTb.getName();
-                String body = "Bonjour, \n " + name + " " + surname + " a envoyé une mise à jour d'un fichier excel que vous pouvez trouver en pièce jointe. \n Vous pouvez contacté cette personne au " + email + " \n Coridalement, \n Le service CFDT Helper.";
-
+                String fileName = currentTb.getName();
                 //String  filename = currentTb.createNewFileFromSheet(specSheet);
-                String filename = currentTb.getPath();
+
+                String filepath = currentTb.getPath();
                 final String sender = editText.getText().toString();
-                if (filename != null) {
-                    String serverUrl = AppConfig.SERVER_URL;
-                    //TODO Change to send to server instead trough POST request
-                    //new  Client().sendFile(context, params);
-                    //new MailSender().execute(params);
+                if (filepath != null) {
+                    String url = AppConfig.SERVER_URL + "/api/" + userDetails.get("access_code");
+                    SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d(MainActivity.class.getSimpleName(), response);
+                                    Toast.makeText(getApplicationContext(), "succès", Toast.LENGTH_LONG).show();
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    smr.addStringParam("surname", surname);
+                    smr.addStringParam("name", name);
+                    smr.addStringParam("email", email);
+                    smr.addStringParam("sender", sender);
+                    smr.addStringParam("fileName", fileName);
+                    smr.addFile("file", filepath);
+
+                    RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+                    mRequestQueue.add(smr);
                     Log.d(MainActivity.class.getSimpleName(), "EMAIL SEND WITH SUCCESS");
 
                 }
