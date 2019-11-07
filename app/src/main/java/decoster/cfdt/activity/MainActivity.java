@@ -26,6 +26,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -39,11 +46,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import decoster.cfdt.AppConfig;
 import decoster.cfdt.R;
-import decoster.cfdt.app.AppConfig;
 import decoster.cfdt.helper.AddressParser;
 import decoster.cfdt.helper.LineParser;
-import decoster.cfdt.helper.MailSender;
 import decoster.cfdt.helper.SQLiteHandler;
 import decoster.cfdt.helper.SessionManager;
 import decoster.cfdt.helper.TableBuilder;
@@ -68,26 +74,36 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<EditText> editTexts = new ArrayList<>();
     private HashSet<Integer> modifiedEditText = new HashSet<>();
     private Drawable valideImage;
+    private HashMap<String, String> userDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         valideImage = ResourcesCompat.getDrawable(getResources(), R.drawable.valid, null);
-        passwordScreen();
+
         db = new SQLiteHandler(getApplicationContext());
+
         context = this;
         // Progress dialog
         // session manager
-        session = new SessionManager(getApplicationContext());
 
-        if (!session.isLoggedIn()) {
-            registerUser();
+
+        try {
+            session = new SessionManager(getApplicationContext());
+            if (!session.isLoggedIn()) {
+                registerUser();
+            }
+            userDetails = db.getUserDetails();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logoutUser();
         }
         //Build tableBuilder for every files in AppConfig (can be improve)
 
 
         dialog = new ProgressDialog(MainActivity.this);
+
         sv = (LinearLayout) findViewById(R.id.ScrollPanel);
         pathPanel = (LinearLayout) findViewById(R.id.pathPanel);
         pathPanel.setVisibility(LinearLayout.GONE);
@@ -113,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendXLS() {
         final Sheet specSheet = currentSheet;
-        final HashMap<String, String> details = db.getUserDetails();
 
         final Dialog diag = new Dialog(this, R.style.PauseDialog);
         diag.setContentView(R.layout.custom_send_layout);
@@ -122,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         String previousText = (String) text.getText();
         text.setText(previousText + " " + currentTb.getName() + " à :");
         final EditText editText = (EditText) diag.findViewById(R.id.editText);
-        editText.setHint(AppConfig.RECIPIENT);
+        editText.setHint(userDetails.get("manager_email"));
         diag.show();
 
         Button yes = (Button) diag.findViewById(R.id.dialogButtonYes);
@@ -139,28 +154,36 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 diag.dismiss();
-                String surname = details.get("surname");
-                String name = details.get("name");
-                String email = details.get("email");
-                String subject = "Envoie de " + name + " " + surname + " pour le fichier " + currentTb.getName();
-                String body = "Bonjour, \n " + name + " " + surname + " a envoyé une mise à jour d'un fichier excel que vous pouvez trouver en pièce jointe. \n Vous pouvez contacté cette personne au " + email + " \n Coridalement, \n Le service CFDT Helper.";
-
+                String surname = userDetails.get("user_surname");
+                String name = userDetails.get("user_name");
+                String email = userDetails.get("user_email");
+                String fileName = currentTb.getName();
                 //String  filename = currentTb.createNewFileFromSheet(specSheet);
-                String filename = currentTb.getPath();
+
+                String filepath = currentTb.getPath();
                 final String sender = editText.getText().toString();
-                if (filename != null) {
+                if (filepath != null) {
+                    String url = AppConfig.SERVER_URL + "/api/" + userDetails.get("access_code");
+                    SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d(MainActivity.class.getSimpleName(), response);
+                                    Toast.makeText(getApplicationContext(), "succès", Toast.LENGTH_LONG).show();
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    smr.addStringParam("surname", surname);
+                    smr.addStringParam("name", name);
+                    smr.addStringParam("email", email);
+                    smr.addFile("file", filepath);
 
-                    String[] params = new String[6];
-                    params[0] = getString(R.string.email_id);
-                    params[1] = getString(R.string.email_secret);
-                    params[2] = subject;
-                    params[3] = body;
-                    params[4] = filename;
-
-                    params[5] = sender.length() == 0 ? AppConfig.RECIPIENT : MailSender.validate(sender);
-
-                    new MailSender().sendFromGMail(context, params);
-                    //new MailSender().execute(params);
+                    RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+                    mRequestQueue.add(smr);
                     Log.d(MainActivity.class.getSimpleName(), "EMAIL SEND WITH SUCCESS");
 
                 }
@@ -426,10 +449,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void passwordScreen() {
-        Intent intent = new Intent(MainActivity.this, PasswordActivity.class);
-        startActivity(intent);
-    }
 
     private void registerUser() {
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
@@ -480,7 +499,8 @@ public class MainActivity extends AppCompatActivity {
             if (listFiles.length() == 0 || params[0]) {
                 Log.d(MainActivity.class.getSimpleName(), "list files not found, creation... ");
                 try {
-                    urlFiles = new URL(AppConfig.fileToDownload);
+                    Log.d(MainActivity.class.getSimpleName(), userDetails.get("gdrive_url"));
+                    urlFiles = new URL(userDetails.get("gdrive_url"));
                     FileUtils.copyURLToFile(urlFiles, listFiles, 100000, 100000);
 
                 } catch (MalformedURLException e) {
