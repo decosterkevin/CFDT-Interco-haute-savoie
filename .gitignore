@@ -1,10 +1,10 @@
 # Built application files
 *.apk
 *.ap_
-
+.idea/
 #Exclude file
 /app/src/main/res/values/secret.xml
-
+/app/release/
 # Files for the ART/Dalvik VM
 *.dex
 
