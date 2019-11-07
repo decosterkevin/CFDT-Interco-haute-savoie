@@ -29,11 +29,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_SURNAME = "uid";
+    private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_USER_EMAIL = "user_email";
+    private static final String KEY_USER_SURNAME = "user_uid";
     private static final String KEY_SERVER_ACCESS_CODE = "access_code";
     private static final String KEY_SERVER_GDRIVE_URL = "gdrive_url";
+    private static final String KEY_SERVER_MANAGER_EMAIL = "manager_email";
+    private static final String KEY_SERVER_ENTITY_NAME = "entity_name";
     private SQLiteDatabase db;
 
     public SQLiteHandler(Context context) {
@@ -45,8 +47,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         this.db = db;
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_SURNAME + " TEXT," + KEY_NAME + " TEXT," + KEY_SERVER_ACCESS_CODE + " TEXT," + KEY_SERVER_GDRIVE_URL + " TEXT,"
-                + KEY_EMAIL + " TEXT UNIQUE" + ")";
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_USER_SURNAME + " TEXT," + KEY_USER_NAME + " TEXT," + KEY_USER_EMAIL + " TEXT," + KEY_SERVER_ACCESS_CODE + " TEXT," + KEY_SERVER_GDRIVE_URL + " TEXT,"
+                + KEY_SERVER_MANAGER_EMAIL + " TEXT UNIQUE," + KEY_SERVER_ENTITY_NAME + " TEXT" + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
 
         Log.d(TAG, "Database tables created");
@@ -65,15 +67,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      */
-    public void addUser(String surname, String name, String serverAccessCode, String gdriveUrl, String email) {
+    public void addUser(String surname, String name, String userEmail, String serverAccessCode, String gdriveUrl, String managerEmail, String entityName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_SURNAME, surname); // Email
-        values.put(KEY_NAME, name); // Name
+        values.put(KEY_USER_SURNAME, surname); // Email
+        values.put(KEY_USER_NAME, name);
+        values.put(KEY_USER_EMAIL, userEmail); // Name
         values.put(KEY_SERVER_ACCESS_CODE, serverAccessCode); // Email
         values.put(KEY_SERVER_GDRIVE_URL, gdriveUrl); // Email
-        values.put(KEY_EMAIL, email); // Email
+        values.put(KEY_SERVER_MANAGER_EMAIL, managerEmail); // Email
+        values.put(KEY_SERVER_ENTITY_NAME, entityName); // Email
 
         // Inserting Row
         long id = db.insert(TABLE_USER, null, values);
@@ -95,11 +99,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             Log.d(TAG, "Fetching user from Sqlite: " + user.toString());
-            user.put("surname", cursor.getString(1));
-            user.put("name", cursor.getString(2));
-            user.put("access_code", cursor.getString(3));
-            user.put("gdrive_url", cursor.getString(4));
-            user.put("email", cursor.getString(5));
+            user.put("user_surname", cursor.getString(1));
+            user.put("user_name", cursor.getString(2));
+            user.put("user_email", cursor.getString(3));
+            user.put("access_code", cursor.getString(4));
+            user.put("gdrive_url", cursor.getString(5));
+            user.put("manager_email", cursor.getString(6));
+            user.put("entity_name", cursor.getString(7));
         }
         cursor.close();
         db.close();

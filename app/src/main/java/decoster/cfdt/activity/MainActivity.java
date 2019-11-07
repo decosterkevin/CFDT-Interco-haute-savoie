@@ -87,12 +87,18 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         // Progress dialog
         // session manager
-        session = new SessionManager(getApplicationContext());
 
-        if (!session.isLoggedIn()) {
-            registerUser();
+
+        try {
+            session = new SessionManager(getApplicationContext());
+            if (!session.isLoggedIn()) {
+                registerUser();
+            }
+            userDetails = db.getUserDetails();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logoutUser();
         }
-        userDetails = db.getUserDetails();
         //Build tableBuilder for every files in AppConfig (can be improve)
 
 
@@ -131,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         String previousText = (String) text.getText();
         text.setText(previousText + " " + currentTb.getName() + " à :");
         final EditText editText = (EditText) diag.findViewById(R.id.editText);
+        editText.setHint(userDetails.get("manager_email"));
         diag.show();
 
         Button yes = (Button) diag.findViewById(R.id.dialogButtonYes);
@@ -147,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 diag.dismiss();
-                String surname = userDetails.get("surname");
-                String name = userDetails.get("name");
-                String email = userDetails.get("email");
+                String surname = userDetails.get("user_surname");
+                String name = userDetails.get("user_name");
+                String email = userDetails.get("user_email");
                 String fileName = currentTb.getName();
                 //String  filename = currentTb.createNewFileFromSheet(specSheet);
 

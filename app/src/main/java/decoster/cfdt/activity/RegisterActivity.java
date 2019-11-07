@@ -89,7 +89,7 @@ public class RegisterActivity extends Activity {
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
      */
-    private void registerUser(final String name, final String surname, final String email, final String accessCode) {
+    private void registerUser(final String name, final String surname, final String user_email, final String accessCode) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -104,7 +104,7 @@ public class RegisterActivity extends Activity {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             // Display the first 500 characters of the response string.
-                            db.addUser(surname, name,  accessCode, jsonObject.getString("gdrive_url"), email);
+                            db.addUser(surname, name, user_email,  accessCode, jsonObject.getString("gdrive_url"), jsonObject.getString("manager_email"), jsonObject.getString("name"));
                             session.setLogin(true);
                             that.finish();
                         } catch (JSONException e) {
