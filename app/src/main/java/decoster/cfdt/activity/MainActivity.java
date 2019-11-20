@@ -87,21 +87,13 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         // Progress dialog
         // session manager
+        session = new SessionManager(getApplicationContext());
 
-
-        try {
-            session = new SessionManager(getApplicationContext());
-            if (!session.isLoggedIn()) {
-                registerUser();
-            }
-            userDetails = db.getUserDetails();
-        } catch (Exception e) {
-            e.printStackTrace();
-            logoutUser();
+        if (!session.isLoggedIn()) {
+            registerUser();
         }
+        userDetails = db.getUserDetails();
         //Build tableBuilder for every files in AppConfig (can be improve)
-
-
         dialog = new ProgressDialog(MainActivity.this);
 
         sv = (LinearLayout) findViewById(R.id.ScrollPanel);
@@ -122,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         fab.hide();
-
         new LoadingTableTask().execute(new Boolean[]{new Boolean(false)});
+
+
+        //Build tableBuilder for every files in AppConfig (can be improve)
 
     }
 
@@ -451,6 +445,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void registerUser() {
+        Log.d(MainActivity.class.getSimpleName(), "registzering");
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
@@ -483,6 +478,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<TableBuilder> doInBackground(Boolean... params) {
+
             if (tbs != null) {
                 for (TableBuilder tb : tbs) {
                     tb.closeFile();
@@ -499,7 +495,6 @@ public class MainActivity extends AppCompatActivity {
             if (listFiles.length() == 0 || params[0]) {
                 Log.d(MainActivity.class.getSimpleName(), "list files not found, creation... ");
                 try {
-                    Log.d(MainActivity.class.getSimpleName(), userDetails.get("gdrive_url"));
                     urlFiles = new URL(userDetails.get("gdrive_url"));
                     FileUtils.copyURLToFile(urlFiles, listFiles, 100000, 100000);
 
@@ -511,9 +506,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (listFiles.length() != 0) {
-                ArrayList<String[]> files = (ArrayList<String[]>) LineParser.parse(listFiles);
 
+                ArrayList<String[]> files = (ArrayList<String[]>) LineParser.parse(listFiles);
+                dialog.setMessage(String.format("Chargement... 0/%s", Integer.toString(files.size())));
                 for (int i = 0; i < files.size(); i++) {
+
                     String[] entry = files.get(i);
                     Log.d("TAG1", entry[0] + " " + entry[1]);
 
@@ -557,12 +554,13 @@ public class MainActivity extends AppCompatActivity {
                             tbs.add(tb);
                         }
 
-
+                        dialog.setMessage(String.format("Chargement... %s/%s",Integer.toString(i),Integer.toString(files.size())));
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
 
                 }
                 LineParser.put(files, listFiles);

@@ -58,6 +58,7 @@ public class RegisterActivity extends Activity {
 
         // Check if user is already logged in or not
         if (session.isLoggedIn()) {
+            Log.d(MainActivity.class.getSimpleName(), "User already logged in, back to mainactivity");
             // User is already logged in. Take him to main activity
             Intent intent = new Intent(RegisterActivity.this,
                     MainActivity.class);
@@ -73,6 +74,7 @@ public class RegisterActivity extends Activity {
                 String surname = inputSurname.getText().toString().trim();
                 String accessCode = inputAccessCode.getText().toString().trim();
                 if (!name.isEmpty() && !email.isEmpty() && !surname.isEmpty() && !accessCode.isEmpty()) {
+                    Log.d(MainActivity.class.getSimpleName(), "Click: Registering user");
                     registerUser(surname, name, email, accessCode);
                 } else {
                     Toast.makeText(getApplicationContext(),
@@ -91,10 +93,11 @@ public class RegisterActivity extends Activity {
      */
     private void registerUser(final String name, final String surname, final String user_email, final String accessCode) {
         // Tag used to cancel the request
-        String tag_string_req = "req_register";
+
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = AppConfig.SERVER_URL + "/api/" + accessCode;
         final Activity that = this;
+        Log.d(MainActivity.class.getSimpleName(), "URL!!!!!!!!!!  url" + url);
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -103,7 +106,9 @@ public class RegisterActivity extends Activity {
                         Log.d(MainActivity.class.getSimpleName(), response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
+                            Log.d(MainActivity.class.getSimpleName(), jsonObject.toString());
                             // Display the first 500 characters of the response string.
+                            Log.d(MainActivity.class.getSimpleName(), "MESSAGE: Received server data and registering user");
                             db.addUser(surname, name, user_email,  accessCode, jsonObject.getString("gdrive_url"), jsonObject.getString("manager_email"), jsonObject.getString("name"));
                             session.setLogin(true);
                             that.finish();
@@ -113,12 +118,12 @@ public class RegisterActivity extends Activity {
 
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),
-                        getResources().getString(R.string.warning_register), Toast.LENGTH_LONG)
-                        .show();
-            }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error while connecting to the server, verify the access code!", Toast.LENGTH_LONG)
+                                .show();
+                    }
         });
 
         // Add the request to the RequestQueue.
